@@ -25,5 +25,5 @@ Logical CI/CD pipeline architectural Design
 Link: https://lucid.app/lucidchart/a980feaf-805e-461f-9b79-8564f59ba969/edit?viewport_loc=72%2C175%2C2219%2C1031%2C47pxRwn913Zy&invitationId=inv_05e38fdc-e37a-4198-92cd-a36f9ca3a1de
 ![Week 0 - Billing   Architecture - Logical CI-CD ](https://user-images.githubusercontent.com/60808086/219036383-4964c884-d2da-4b05-be55-2af433fdf85f.jpeg)
 
-From the billing topic, I learned how to create budgets so that when i exceed a certain threshold on my aws spending i get notified via email this service helps in tracking your costs.
+From the billing topic, I learned how to create budgets so that when i exceed a certain threshold on my aws spending i get notified via email. This helps you in tracking your costs.
 ![budgets](https://user-images.githubusercontent.com/60808086/219052663-7f936a4a-989d-426d-8aef-612d53066bb6.png)
