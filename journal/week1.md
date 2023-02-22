@@ -73,3 +73,24 @@ From the top 10 lessons i learnt that the containers should not run as a root us
 
 ![dockerfile-updated vuln](https://user-images.githubusercontent.com/60808086/220614519-7cdbc53b-8ae6-46a1-8558-93e2f724a99a.png)
 
+**4. Scanning Cruddur Application for Vulnerablities using Synk**
+
+From docker security lecture, i learnt the various tools that can be used to scan our docker files. I used synk since it has a free tier. I scanned our cruddur application and i was shocked by the number of vulnerabilies it had.
+
+**Synk Overview** 
+
+Our Cruddur App had a total of 8 critical severity  and 22 of high severity
+
+![synk scan](https://user-images.githubusercontent.com/60808086/220615843-eb4b6c41-6fb8-477d-92d1-363edca29fd7.png)
+
+**Frontend Dockerfile Vulnerabilties**
+
+Synk recommended i upgrade my base image from ```node:16.18``` to ```node:16.19.0```
+
+![frontend-vuln](https://user-images.githubusercontent.com/60808086/220615918-e956edd1-0d40-4862-bcd3-3924ef3248f1.png)
+
+**Backend Dockerfile Vulnerabilites**
+
+Synk recommended i upgrade my base image from ```python:3.10-slim-buster``` to ```python:3.12.0a5-slim```
+
+![backend-vulnerablities](https://user-images.githubusercontent.com/60808086/220615962-ec735270-c01a-4815-9203-ac4496ed3257.png)
