@@ -94,3 +94,28 @@ Synk recommended i upgrade my base image from ```node:16.18``` to ```node:16.19.
 Synk recommended i upgrade my base image from ```python:3.10-slim-buster``` to ```python:3.12.0a5-slim```
 
 ![backend-vulnerablities](https://user-images.githubusercontent.com/60808086/220615962-ec735270-c01a-4815-9203-ac4496ed3257.png)
+
+**5. Resolved some of the Vulnerabilities**
+
+I implemented some of the recommendations by changing the base image for both frontend and backend dockerfiles
+
+![base image change](https://user-images.githubusercontent.com/60808086/220621178-bba94fbb-27a9-46ae-bf31-41c88045e3cf.png)
+
+**Synk overview**
+
+
+The vulnerabilties of our cruddur applications reduced to 2 critical severity and 8 high severity
+
+![sync scan after implementing](https://user-images.githubusercontent.com/60808086/220620477-b32beec0-d7ce-4fe5-9c95-e03a7caee22d.png)
+
+**Frontend scan**
+
+![frontend scan after](https://user-images.githubusercontent.com/60808086/220620341-7b5fe37c-0b9b-47e1-86f1-1cca42c19b66.png)
+
+**Backend scan**
+
+![backend scan after](https://user-images.githubusercontent.com/60808086/220620414-b01aaf96-8ab3-452e-9e1e-57c0940a628a.png)
+
+
+
+
