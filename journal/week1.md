@@ -116,6 +116,14 @@ The vulnerabilties of our cruddur applications reduced to 2 critical severity an
 
 ![backend scan after](https://user-images.githubusercontent.com/60808086/220620414-b01aaf96-8ab3-452e-9e1e-57c0940a628a.png)
 
+**6. Added DynamoDB and Postgress to our DockerCompose File**
 
+I learnt how to add dynamoDB and postgres databases to our docker compose file
+
+![dynamodb   postgres](https://user-images.githubusercontent.com/60808086/220624884-d8cbb8ac-8a65-42da-ad70-e2eeab0f4a4f.png)
+
+I checked to ensure that postgres was running after running our docker compose file
+
+![postgres](https://user-images.githubusercontent.com/60808086/220625047-90938cf8-05c3-430b-91ad-76cc3549c4e6.png)
 
 
