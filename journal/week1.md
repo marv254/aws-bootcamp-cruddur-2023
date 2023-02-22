@@ -66,3 +66,10 @@ networks:
     driver: bridge
     name: cruddur
 ```
+
+**3. Implementing Docker Security best practices**
+
+From the top 10 lessons i learnt that the containers should not run as a root user so i created a new user called cruddur for both the frontend container and the backend container, i also change the permission for application to allow cruddur user to run the application. I also ensured that all the packages inside the containers are all up to date.
+
+![dockerfile-updated vuln](https://user-images.githubusercontent.com/60808086/220614519-7cdbc53b-8ae6-46a1-8558-93e2f724a99a.png)
+
