@@ -1,4 +1,4 @@
-FROM python:3.12.0a5-slim
+FROM python:3.10-slim-buster
 
 RUN apt-get update && apt-get upgrade -y && pip3 install --upgrade pip
 RUN useradd cruddur 
