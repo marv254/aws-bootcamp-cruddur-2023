@@ -46,79 +46,48 @@ we then run a query to group our data by traceid
 
 ![honeycomb 3](https://user-images.githubusercontent.com/60808086/222716823-99af6495-31bc-404b-a773-bdb27888bec9.png)
 
-**2. AWS X-Ray**
+**2. Cloudwatch**
 
-**Instrument AWS X-Ray for backend flask**
+Add dependency ```watchtower``` to our ```requirements.txt```.
+Install the dependency by issuing ``` pip install -r requirements.txt```
 
-First we weill set our env vars 
+In our ```app.py``` we will instrument our backend to use cloudwatch
 ```
-export AWS_REGION="ca-central-1"
-gp env AWS_REGION="ca-central-1"
+import watchtower
+import logging
+from time import strftime
 ```
-add dependencies in ```requirements.txt``` 
 ```
-aws-xray-sdk
+# Configuring Logger to Use CloudWatch
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+LOGGER.addHandler(console_handler)
+LOGGER.addHandler(cw_handler)
+LOGGER.info("some message")
 ```
-we will then install these dependencies by issuing  ```pip install -r requirements.txt```
+```
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
+ ```
+ we will then log some text in an API endpoint
+ 
+ ![logger](https://user-images.githubusercontent.com/60808086/222735048-975c9634-2724-43c6-aa95-bdcb5405678c.png)
 
-In our ```app.py``` file we will add the code below to instrument AWS X-Ray
-
-```
-from aws_xray_sdk.core import xray_recorder
-from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
-
-xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='Cruddur', dynamic_naming=xray_url)
-XRayMiddleware(app, xray_recorder)
-```
-Setting up  AWS X-Ray Resources
-
-Add ```aws/json/xray.json```
-```
-{
-  "SamplingRule": {
-      "RuleName": "Cruddur",
-      "ResourceARN": "*",
-      "Priority": 9000,
-      "FixedRate": 0.1,
-      "ReservoirSize": 5,
-      "ServiceName": "backend-flask",
-      "ServiceType": "*",
-      "Host": "*",
-      "HTTPMethod": "*",
-      "URLPath": "*",
-      "Version": 1
-  }
-}
-```
-
-we will then create a log group by issuing the commands below:
-```
-FLASK_ADDRESS="https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
-aws xray create-group \
-   --group-name "Cruddur" \
-   --filter-expression "service(\"backend-flask")
-   ```
-we will then use the x-ray.json file that we created earlier to create our sampling rule for x-ray
-```
-aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
-```
-we will also need to add a x-ray daemon service in our docker-compose fiel
-
-```
-  xray-daemon:
-    image: "amazon/aws-xray-daemon"
-    environment:
+ set the env var in our backend-flask of our docker-compose file
+ ```
+       AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-      AWS_REGION: "us-east-1"
-    command:
-      - "xray -o -b xray-daemon:2000"
-    ports:
-      - 2000:2000/udp
-```
-Finally we will set two env vars to our backend-flask in our docker-compose.yml file
-```
-      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
-      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
-```
+  ```
+
+![cloudwatch](https://user-images.githubusercontent.com/60808086/222732221-c6234091-2304-4237-8011-15e944b26024.png)
+
+![cloudwatch 1](https://user-images.githubusercontent.com/60808086/222732320-79af2be6-e09c-4746-9abf-bda10f2964e0.png)
+
+
+
