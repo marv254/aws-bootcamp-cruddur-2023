@@ -34,7 +34,7 @@ gp env HONEYCOMB_API_KEY=""
 gp env HONEYCOMB_SERVICE_NAME="Cruddur"
 ```
 
-ii). Run queries to explore traces within HoneyComb.io
+**ii). Run queries to explore traces within HoneyComb.io**
 
 We already set our cruddur app to automatically send data to our honeycomb account.
 
@@ -45,3 +45,80 @@ we then run a query to group our data by traceid
 ![honeycomb 2](https://user-images.githubusercontent.com/60808086/222716786-d3f0df75-b71d-4b0c-802a-6c1022f990a5.png)
 
 ![honeycomb 3](https://user-images.githubusercontent.com/60808086/222716823-99af6495-31bc-404b-a773-bdb27888bec9.png)
+
+**2. AWS X-Ray**
+
+**Instrument AWS X-Ray for backend flask**
+
+First we weill set our env vars 
+```
+export AWS_REGION="ca-central-1"
+gp env AWS_REGION="ca-central-1"
+```
+add dependencies in ```requirements.txt``` 
+```
+aws-xray-sdk
+```
+we will then install these dependencies by issuing  ```pip install -r requirements.txt```
+
+In our ```app.py``` file we will add the code below to instrument AWS X-Ray
+
+```
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='Cruddur', dynamic_naming=xray_url)
+XRayMiddleware(app, xray_recorder)
+```
+Setting up  AWS X-Ray Resources
+
+Add ```aws/json/xray.json```
+```
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "backend-flask",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+
+we will then create a log group by issuing the commands below:
+```
+FLASK_ADDRESS="https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+aws xray create-group \
+   --group-name "Cruddur" \
+   --filter-expression "service(\"backend-flask")
+   ```
+we will then use the x-ray.json file that we created earlier to create our sampling rule for x-ray
+```
+aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
+```
+we will also need to add a x-ray daemon service in our docker-compose fiel
+
+```
+  xray-daemon:
+    image: "amazon/aws-xray-daemon"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "us-east-1"
+    command:
+      - "xray -o -b xray-daemon:2000"
+    ports:
+      - 2000:2000/udp
+```
+Finally we will set two env vars to our backend-flask in our docker-compose.yml file
+```
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
