@@ -89,5 +89,57 @@ def after_request(response):
 
 ![cloudwatch 1](https://user-images.githubusercontent.com/60808086/222732320-79af2be6-e09c-4746-9abf-bda10f2964e0.png)
 
+**3. Rollbar**
 
+First you will have to have a rollbar account. Create a new project to store our items.
 
+First you add the dependencies below to your ```requirements.txt ```
+```
+blinker
+rollbar
+```
+Install the dependency by issuing ``` pip install -r requirements.txt```
+
+we also neeed to set access token as env var 
+```
+export ROLLBAR_ACCESS_TOKEN=""
+gp env ROLLBAR_ACCESS_TOKEN=""
+```
+also set the env var of backend-flask for docker-compose file
+```
+export ROLLBAR_ACCESS_TOKEN=""
+gp env ROLLBAR_ACCESS_TOKEN=""
+```
+instrument rollbar in app.py file for our backend
+```
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+```
+```
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+@app.before_first_request
+def init_rollbar():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        rollbar_access_token,
+        # environment name
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False)
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+ ```
+ we will then add an endpoint for testing rollbar in our ``app.py``` file
+ ```
+ @app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
+ ```
+ 
+![rollbar](https://user-images.githubusercontent.com/60808086/222736411-d936cbc7-b13d-4d62-966e-fac6b8d5679a.png)
