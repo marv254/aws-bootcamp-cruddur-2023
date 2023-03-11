@@ -243,3 +243,143 @@ export default function DesktopSidebar(props) {
   );
 }
 ```
+**4. Verify JWT Token server side to serve authenticated API endpoints**
+
+**Sign Up Page** 
+```javascript
+import { Auth } from 'aws-amplify';
+
+const [errors, setErrors] = React.useState('');
+  
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    console.log('username',username)
+    console.log('email',email)
+    console.log('name',name)
+    try {
+      const { user } = await Auth.signUp({
+        username: email,
+        password: password,
+        attributes: {
+          name: name,
+          email: email,
+          preferred_username: username,
+        },
+        autoSignIn: { // optional - enables auto sign in after user is confirmed
+          enabled: true,
+        }
+      });
+      console.log(user);
+      window.location.href = `/confirm?email=${email}`
+    } catch (error) {
+        console.log(error);
+        setErrors(error.message)
+    }
+    return false
+  }
+```
+![signup1](https://user-images.githubusercontent.com/60808086/224473070-3b2ec36b-827d-4b05-9a79-502e1b7fc6d2.png)
+
+![signup2](https://user-images.githubusercontent.com/60808086/224473080-dc847c1a-1c4e-4fde-ac27-89c3901dd761.png)
+![signup3](https://user-images.githubusercontent.com/60808086/224473083-2be79fca-3f92-4d98-80ae-d1cf062e4567.png)
+![signup4](https://user-images.githubusercontent.com/60808086/224473087-12162806-d487-4abf-9164-2f97177652d2.png)
+
+**Sign In Page**
+```javascript
+import { Auth } from 'aws-amplify';
+
+const [errors, setErrors] = React.useState('');
+
+  const onsubmit = async (event) => {
+    setErrors('')
+    event.preventDefault();
+    Auth.signIn(email, password)
+    .then(user => {
+      console.log('user',user)
+      localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+      window.location.href = "/"
+    })
+    .catch(error => { 
+      if (error.code == 'UserNotConfirmedException') {
+        window.location.href = "/confirm"
+      }
+      setErrors(error.message)
+    });
+    return false
+  }
+```
+![signin](https://user-images.githubusercontent.com/60808086/224473357-273e129f-014d-40fc-a072-4a1e9de5efde.png)
+![signin2](https://user-images.githubusercontent.com/60808086/224473360-dc68f987-df9c-4989-8ecf-f6b177687c78.png)
+
+**Confirmation Page**
+```javascript
+  const resend_code = async (event) => {
+    setErrors('')
+    try {
+      await Auth.resendSignUp(email);
+      console.log('code resent successfully');
+      setCodeSent(true)
+    } catch (err) {
+      // does not return a code
+      // does cognito always return english
+      // for this to be an okay match?
+      console.log(err)
+      if (err.message == 'Username cannot be empty'){
+        setErrors("You need to provide an email in order to send Resend Activiation Code")   
+      } else if (err.message == "Username/client id combination not found."){
+        setErrors("Email is invalid or cannot be found.")   
+      }
+    }
+  }
+
+  const onsubmit = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    try {
+      await Auth.confirmSignUp(email, code);
+      window.location.href = "/"
+    } catch (error) {
+      setErrors(error.message)
+    }
+    return false
+  }
+```
+
+**Recovery Page**
+```javascript
+import { Auth } from 'aws-amplify';
+
+const onsubmit_send_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    Auth.forgotPassword(username)
+    .then((data) => setFormState('confirm_code') )
+    .catch((err) => setErrors(err.message) );
+    return false
+  }
+  
+  const onsubmit_confirm_code = async (event) => {
+    event.preventDefault();
+    setErrors('')
+    if (password == passwordAgain){
+      Auth.forgotPasswordSubmit(username, code, password)
+      .then((data) => setFormState('success'))
+      .catch((err) => setErrors(err.message) );
+    } else {
+      setErrors('Passwords do not match')
+    }
+    return false
+  }
+  ```
+  add in the ```HomeFeedPage.js``` a header  to pass along the access token
+  ```javascript
+    headers: {
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`
+  }
+  ```
+  ![recover](https://user-images.githubusercontent.com/60808086/224473844-4ed6f071-90f9-4144-980b-ef0508919d7c.png)
+![recover2](https://user-images.githubusercontent.com/60808086/224473850-e003ebb8-53af-4386-88e1-497ff1a50490.png)
+
+![recover3](https://user-images.githubusercontent.com/60808086/224473856-7cabd68b-1fc1-4575-b736-260c5db3df72.png)
+![recover4](https://user-images.githubusercontent.com/60808086/224473866-a9005502-4e55-4f8b-af99-1a22bc3ee2bd.png)
