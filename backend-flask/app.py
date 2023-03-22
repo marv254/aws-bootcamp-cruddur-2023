@@ -5,6 +5,7 @@ import os
 import sys
 
 from services.home_activities import *
+from services.notifications_activities import *
 from services.user_activities import *
 from services.create_activity import *
 from services.create_reply import *
@@ -13,6 +14,7 @@ from services.message_groups import *
 from services.messages import *
 from services.create_message import *
 from services.show_activity import *
+from services.users_short import *
 
 from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError
 
@@ -141,7 +143,8 @@ def data_message_groups():
     app.logger.debug(e)
     return {}, 401
 
-@app.route("/api/messages/@<string:message_group_uuid>", methods=['GET'])
+
+@app.route("/api/messages/<string:message_group_uuid>", methods=['GET'])
 def data_messages(message_group_uuid):
   user_sender_handle = 'andrewbrown'
   user_receiver_handle = request.args.get('user_reciever_handle')
@@ -220,6 +223,16 @@ def data_home():
     app.logger.debug(e)
     app.logger.debug("unauthenicated")
     data = HomeActivities.run()
+  return data, 200
+
+@app.route("/api/activities/notifications", methods=['GET'])
+def data_notifications():
+  data = NotificationsActivities.run()
+  return data, 200
+
+@app.route("/api/users/@<string:handle>/short", methods=['GET'])
+def data_users_short(handle):
+  data = UsersShort.run(handle)
   return data, 200
 
 @app.route("/api/activities/@<string:handle>", methods=['GET'])
