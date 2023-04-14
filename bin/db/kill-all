@@ -13,11 +13,6 @@ BACKEND_FLASK_PATH="$PROJECT_PATH/backend-flask"
 kill_path="$BACKEND_FLASK_PATH/db/kill-all-connections.sql"
 echo $kill_path
 
-if [ "$1" = "prod" ]; then
-  echo "Running in production mode"
-  URL=$PROD_CONNECTION_URL
-else
-  URL=$CONNECTION_URL
-fi
+URL=$CONNECTION_URL
 
 psql $URL cruddur < $kill_path
