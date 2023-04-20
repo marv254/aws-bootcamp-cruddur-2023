@@ -11,6 +11,8 @@ COPY . .
 
 EXPOSE ${PORT}
 
+ENV PYTHONUNBUFFERED=1
+
 #change permissions
 RUN chown -R cruddur:cruddur /backend-flask
 RUN chmod -R 755 /backend-flask
