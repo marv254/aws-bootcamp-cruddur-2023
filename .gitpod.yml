@@ -11,7 +11,7 @@ tasks:
       bash bin/ecr/login
   - name: flask
     command: |
-      ruby $THEIA_WORKSPACE_ROOT/bin/frontend/generate-env
+      ruby $THEIA_WORKSPACE_ROOT/bin/backend/generate-env
       cd backend-flask
       pip install -r requirements.txt
   - name: react-js
