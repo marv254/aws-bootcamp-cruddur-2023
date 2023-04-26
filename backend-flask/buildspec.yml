@@ -26,23 +26,9 @@ phases:
 env:
   variables:
     AWS_ACCOUNT_ID: 888846118547
-    AWS_DEFAULT_REGION: us-east-1
     CONTAINER_NAME: backend-flask
     IMAGE_URL: 888846118547.dkr.ecr.us-east-1.amazonaws.com
     REPO_NAME: backend-flask:latest
-    AWS_COGNITO_USER_POOL_CLIENT_ID: 5a9vnlocco0e8pd9d6ghcpr0pq
-    AWS_COGNITO_USER_POOL_ID: us-east-1_c6aZQLgwn
-    FRONTEND_URL: https://devopsmarv.com
-    BACKEND_URL: https://api.devopsmarv.com
-    OTEL_EXPORTER_OTLP_ENDPOINT: https://api.honeycomb.io
-    OTEL_SERVICE_NAME: backend-flask
-  parameter-store: 
-    AWS_ACCESS_ID: /cruddur/backend-flask/AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: /cruddur/backend-flask/AWS_SECRET_ACCESS_KEY
-    CONNECTION_URL: /cruddur/backend-flask/CONNECTION_URL
-    OTEL_EXPORTER_OTLP_HEADERS: /cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS
-    ROLLBAR_ACCESS_TOKEN: /cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN
-
 artifacts:
   files:
     - imagedefinitions.json
