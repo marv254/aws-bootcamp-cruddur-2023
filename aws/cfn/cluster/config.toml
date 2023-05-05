@@ -5,3 +5,4 @@ stack_name = 'CrdCluster'
 
 [parameters]
 CertificateArn = 'arn:aws:acm:us-east-1:888846118547:certificate/a86df20f-5831-4bf0-8abc-657cdf27b51d'
+NetworkingStack = 'CrdNet'

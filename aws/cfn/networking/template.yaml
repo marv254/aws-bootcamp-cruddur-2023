@@ -18,7 +18,7 @@ Parameters:
     Default: 10.0.0.0/16
   Az1:
     Type: AWS::EC2::AvailabilityZone::Name
-    Default: us-east-1a
+    Default: ca-central-1a
   SubnetCidrBlocks: 
     Description: "Comma-delimited list of CIDR blocks for our private public subnets"
     Type: CommaDelimitedList
@@ -31,10 +31,10 @@ Parameters:
       10.0.20.0/24
   Az2:
     Type: AWS::EC2::AvailabilityZone::Name
-    Default: us-east-1b
+    Default: ca-central-1b
   Az3:
     Type: AWS::EC2::AvailabilityZone::Name
-    Default: us-east-1d
+    Default: ca-central-1d
 Resources:
   VPC:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
@@ -190,17 +190,22 @@ Outputs:
     Value: !Join [",", !Ref SubnetCidrBlocks]
     Export:
       Name: !Sub "${AWS::StackName}SubnetCidrBlocks"
-  SubnetIds:
+  PublicSubnetIds:
     Value: !Join 
       - ","
       - - !Ref SubnetPub1
         - !Ref SubnetPub2
         - !Ref SubnetPub3
-        - !Ref SubnetPriv1
+    Export:
+      Name: !Sub "${AWS::StackName}PublicSubnetIds"
+  PrivateSubnetIds:
+    Value: !Join 
+      - ","
+      - - !Ref SubnetPriv1
         - !Ref SubnetPriv2
         - !Ref SubnetPriv3
     Export:
-      Name: !Sub "${AWS::StackName}SubnetIds"
+      Name: !Sub "${AWS::StackName}PrivateSubnetIds"
   AvailabilityZones:
     Value: !Join 
       - ","
