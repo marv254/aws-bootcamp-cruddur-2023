@@ -103,7 +103,7 @@ Resources:
       LaunchType: FARGATE
       LoadBalancers:
       # TODO - UPDATE THIS
-        - TargetGroupArn: 'arn:aws:elasticloadbalancing:ca-central-1:387543059434:targetgroup/cruddur-backend-flask-tg/87ed2a3daf2d2b1d'
+        - TargetGroupArn: 'arn:aws:elasticloadbalancing:us-east-1:888846118547:targetgroup/Cruddur-backend-flask-tg/49c44a9c9a09d9dc'
           ContainerName: 'backend-flask'
           ContainerPort: !Ref ContainerPort
       NetworkConfiguration:
